@@ -33,7 +33,7 @@
                                 <th> Train Name </th>
                                 <th> Destination </th>
                                 <th> Frequency(min) </th>
-                                <th> Next Arrival ($) </th>
+                                <th> First Arrival ($) </th>
                                 <th> Minutes Away ($) </th>
                             </tr>
                         </thead>
@@ -101,19 +101,54 @@
                 name: name,
                 frequency: frequency,
                 destination: destination,
-                first: first          
+                first: first
+
             }
+            //supposed to insure that code won't break from inputs after current time//
+            var firstTimeConverted= moment(first, "hh:mm").subtract(1, "years");
+            console.log(firstTimeConverted);
+
+            //current time
+            var currentTime = moment();
+            console.log(currentTime)
+
+
+            //takes current time and subtracts a years worth of time then displays it in minutes//
+            var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+            console.log("DIFFERENCE IN TIME: " + diffTime);
+
+
+            //takes the number recieved after and divides as many times as possible leaving us with a modulus//
+            var tRemainder = diffTime % frequency;
+            console.log(tRemainder);
+
+            //takes the frequency and subtracts it from the remainder//
+            var minToArrival = frequency - tRemainder;
+            console.log("MINUTES TILL TRAIN: " + minToArrival);
+
+            // we then add that to the current time and display this as the next train arrives.
+            var nextTrain = moment().add(minToArrival, "minutes");
+            console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
+
+           
+
+
+            
+  
+
             database.ref().push(trainObject);
             $("#train-name").val("");
             $("#destination").val("");
             $("#frequency").val("");
             $("#first-train").val("");
+
             });
 
 
             database.ref().on("child_added", function(snapshot){
 
             var previousTrain = snapshot.val();
+
             var newRow = $("<tr>");
             var newName = $("<td>");
             var newDestination = $("<td>");
@@ -126,12 +161,14 @@
             newName.text(previousTrain.name);
             newFrequency.text(previousTrain.frequency);
             newDestination.text(previousTrain.destination);
-            newArrivalTime.text(previousTrain.rate);
+            newArrivalTime.text("hello");
+            console.log()
             newRow.append(newName);
             newRow.append(newDestination);
             newRow.append(newFrequency);
             
             newRow.append(newArrivalTime);
+
 
 
             $("#train-container").append(newRow)
